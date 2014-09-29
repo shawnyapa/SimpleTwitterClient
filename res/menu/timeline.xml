@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+        <item
+        android:id="@+id/refreshTimeline"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/refresh"/>
+    <item
+        android:id="@+id/postTweet"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/tweet"/>
+
+</menu>
