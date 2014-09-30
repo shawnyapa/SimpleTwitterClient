@@ -33,7 +33,7 @@ public class CreateTweetActivity extends Activity {
 		Tweet tweet = new Tweet();
 		String tweetBody = etTweet.getText().toString();
 		tweet.setBody(tweetBody);
-		Toast.makeText(this, "Body: " + tweetBody, Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "Body: " + tweetBody, Toast.LENGTH_SHORT).show();
 		// Initiate Spinner
 		
 		client.postTweet(tweetBody, new JsonHttpResponseHandler() {
@@ -46,7 +46,7 @@ public class CreateTweetActivity extends Activity {
 			@Override
 			public void onFailure(Throwable e, String s) {
 				Log.d("debug", e.toString());
-				// Toast the Failure to Post
+				Toast.makeText(CreateTweetActivity.this, "Unable to Tweet your Status", Toast.LENGTH_SHORT).show();
 				// Remove Spinner
 			}
 		});
