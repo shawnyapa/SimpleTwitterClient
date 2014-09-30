@@ -1,13 +1,9 @@
 package com.codepath.apps.basictwitter;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.json.JSONArray;
-
 import com.codepath.apps.basictwitter.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +18,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.Collections;
 
 public class TimelineActivity extends Activity {
 	public TwitterClient client;
@@ -50,11 +45,14 @@ public class TimelineActivity extends Activity {
 	    	public void onLoadMore(int page, int totalItemsCount) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to your AdapterView
+        		if(isNetworkAvailable()) {
         		addOlderTweetstoTimeline(count, maxId, 0);
+        		} else { networkUnavailableToast(); }
 	    	}
         });
+        if(isNetworkAvailable()) {
 		addOlderTweetstoTimeline(count, maxId, 0);
-		
+        } else { networkUnavailableToast(); }
 	}
 	
     @Override
@@ -131,7 +129,10 @@ public class TimelineActivity extends Activity {
 	}
 	
 	public void refreshTimeline() {
+		if(isNetworkAvailable()) {
 		addNewerTweetstoTimeline(count, maxId, sinceId);
+		} else { networkUnavailableToast(); }
+		
 	}
 	
 	@Override
@@ -161,5 +162,9 @@ public class TimelineActivity extends Activity {
 	          = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 	    return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+	}
+	
+	public void networkUnavailableToast() {
+		Toast.makeText(this, "Network is Unavailable", Toast.LENGTH_LONG).show(); 
 	}
 }
