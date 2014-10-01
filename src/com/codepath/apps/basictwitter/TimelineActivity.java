@@ -17,7 +17,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-//import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 
 
 public class TimelineActivity extends Activity {
@@ -30,6 +31,7 @@ public class TimelineActivity extends Activity {
 	private long sinceId;
 	private Boolean isFirstLoad = true;
 	private final int REQUEST_CODE_COMPOSE = 10;
+	private SwipeRefreshLayout swipeContainer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +53,6 @@ public class TimelineActivity extends Activity {
         		} else { networkUnavailableToast(); }
 	    	}
         });
-        /*
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new OnRefreshListener() {
@@ -60,10 +61,10 @@ public class TimelineActivity extends Activity {
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
-                fetchTimelineAsync(0);
+            	refreshTimeline();
             } 
         });
-        */
+       
         if(isNetworkAvailable()) {
 		addOlderTweetstoTimeline(count, maxId, 0);
         } else { networkUnavailableToast(); }
@@ -91,8 +92,6 @@ public class TimelineActivity extends Activity {
 				setFirstLoad(false);
 			}
 
-
-
 			@Override
 			public void onFailure(Throwable e, String s) {
 				Log.d("Debug", e.toString());
@@ -112,13 +111,16 @@ public class TimelineActivity extends Activity {
 					setsinceId(newTweets);
 					tweets.addAll(0, newTweets);
 					adapterTweets.notifyDataSetChanged();
+					swipeContainer.setRefreshing(false);
 				}			
 			}
 			@Override
 			public void onFailure(Throwable e, String s) {
 				Log.d("Debug", e.toString());
 				Log.d("Debug", s.toString());
+				swipeContainer.setRefreshing(false);
 			}
+			
 		});
 		
 	}
