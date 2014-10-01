@@ -41,8 +41,11 @@ public class CreateTweetActivity extends Activity {
 			public void onSuccess(JSONObject json) {
 				//Log.d("debug", json.toString());
 				//Remove Spinner
-				CreateTweetActivity.this.finish();
+				createTweetandPosttoTimeline(json);
+				//fromJSON(JSONObject jsonObject)
+				//CreateTweetActivity.this.finish();
 			}
+
 			@Override
 			public void onFailure(Throwable e, String s) {
 				Log.d("debug", e.toString());
@@ -50,7 +53,13 @@ public class CreateTweetActivity extends Activity {
 				// Remove Spinner
 			}
 		});
-		
-
+	}
+	
+	private void createTweetandPosttoTimeline(JSONObject json) {
+		Tweet newTweet = Tweet.fromJSON(json);
+		Intent i = new Intent(CreateTweetActivity.this, TimelineActivity.class);	
+        i.putExtra("newTweet", newTweet);
+        setResult(RESULT_OK, i);
+        finish();	
 	}
 }

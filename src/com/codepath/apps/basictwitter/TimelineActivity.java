@@ -28,7 +28,7 @@ public class TimelineActivity extends Activity {
 	private long maxId;
 	private long sinceId;
 	private Boolean isFirstLoad = true;
-	
+	private final int REQUEST_CODE_COMPOSE = 10;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -96,10 +96,9 @@ public class TimelineActivity extends Activity {
 				ArrayList<Tweet> newTweets = Tweet.fromJSONArray(json);
 				if (newTweets.size() > 0) {
 					setsinceId(newTweets);
-					adapterTweets.addAll(newTweets);
-				}
-				
-				
+					tweets.addAll(0, newTweets);
+					adapterTweets.notifyDataSetChanged();
+				}			
 			}
 			@Override
 			public void onFailure(Throwable e, String s) {
@@ -130,7 +129,7 @@ public class TimelineActivity extends Activity {
 	
 	public void refreshTimeline() {
 		if(isNetworkAvailable()) {
-		addNewerTweetstoTimeline(count, maxId, sinceId);
+			addNewerTweetstoTimeline(count, maxId, sinceId);
 		} else { networkUnavailableToast(); }
 		
 	}
@@ -149,12 +148,26 @@ public class TimelineActivity extends Activity {
 	            return super.onOptionsItemSelected(item);
 	    }
 	}
-	
-
 
 	public void onCompose(MenuItem mi) {
 		Intent i = new Intent(this, CreateTweetActivity.class);
-		startActivity(i);
+		startActivityForResult(i, REQUEST_CODE_COMPOSE);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	  // REQUEST_CODE is defined above
+		if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_COMPOSE) {
+			Tweet newTweet = (Tweet) data.getSerializableExtra("newTweet");
+			checkAndAddNewTweet(newTweet);
+		}
+	}
+	
+	private void checkAndAddNewTweet(Tweet newTweet) {
+		tweets.add(0, newTweet);
+		adapterTweets.notifyDataSetChanged();
+		sinceId = newTweet.getUid();
+		
 	}
 	
 	private Boolean isNetworkAvailable() {
