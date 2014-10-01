@@ -13,5 +13,6 @@
     <string name="title_activity_create_tweet">CreateTweetActivity</string>
     <string name="tweet">Tweet</string>
     <string name="refresh">Refresh</string>
+    <string name="char_count">"Character Count: "</string>
 
 </resources>

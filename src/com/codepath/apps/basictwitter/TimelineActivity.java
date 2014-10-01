@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+//import android.support.v4.widget.SwipeRefreshLayout;
 
 
 public class TimelineActivity extends Activity {
@@ -50,6 +51,19 @@ public class TimelineActivity extends Activity {
         		} else { networkUnavailableToast(); }
 	    	}
         });
+        /*
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                fetchTimelineAsync(0);
+            } 
+        });
+        */
         if(isNetworkAvailable()) {
 		addOlderTweetstoTimeline(count, maxId, 0);
         } else { networkUnavailableToast(); }
