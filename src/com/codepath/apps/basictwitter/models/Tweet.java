@@ -1,6 +1,10 @@
 package com.codepath.apps.basictwitter.models;
 
 import java.io.Serializable;
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Column.ForeignKeyAction;
+import com.activeandroid.annotation.Table;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,16 +17,25 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
+@Table(name = "Tweets")
 public class Tweet implements Serializable{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String body;
+	@Column(name = "uid", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
 	private long uid;
+	@Column(name="body")
+	private String body;
+	@Column(name="createdAt")
 	private Date createdAt;
+	@Column(name = "user", onUpdate = ForeignKeyAction.CASCADE, onDelete = ForeignKeyAction.CASCADE)
 	private User user;
 
+	public Tweet() {
+		super();
+	}
+	
 	public String getBody() {
 		return body;
 	}

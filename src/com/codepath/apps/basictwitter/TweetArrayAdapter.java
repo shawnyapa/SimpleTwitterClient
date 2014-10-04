@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.codepath.apps.basictwitter.models.Tweet;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -17,6 +18,8 @@ import android.content.Context;
 import android.text.format.DateUtils;
 
 public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
+	
+	ImageLoader imageLoader;
 
 	public TweetArrayAdapter(Context context, List<Tweet> tweets) {
 		super(context, 0, tweets);

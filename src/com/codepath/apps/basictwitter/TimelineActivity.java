@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import com.codepath.apps.basictwitter.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -64,7 +66,9 @@ public class TimelineActivity extends Activity {
             	refreshTimeline();
             } 
         });
-       
+        
+       // Pull Tweets from Active Android
+        
         if(isNetworkAvailable()) {
 		addOlderTweetstoTimeline(count, maxId, 0);
         } else { networkUnavailableToast(); }
@@ -84,6 +88,11 @@ public class TimelineActivity extends Activity {
 			public void onSuccess(JSONArray json) {
 				ArrayList<Tweet> newTweets = Tweet.fromJSONArray(json);
 				setmaxId(newTweets);
+				
+				// Add Active Android Put Data
+				// clear ArrayList
+				// Pull Data from Active Android
+				
 				adapterTweets.addAll(newTweets);
 				Boolean firstLoad = checkFirstLoad();
 				if (firstLoad == true) {
@@ -109,6 +118,11 @@ public class TimelineActivity extends Activity {
 				ArrayList<Tweet> newTweets = Tweet.fromJSONArray(json);
 				if (newTweets.size() > 0) {
 					setsinceId(newTweets);
+					
+					// Add Active Android Put Data
+					// clear ArrayList
+					// Pull Data from Active Android										
+					
 					tweets.addAll(0, newTweets);
 					adapterTweets.notifyDataSetChanged();
 					swipeContainer.setRefreshing(false);
@@ -181,6 +195,11 @@ public class TimelineActivity extends Activity {
 	
 	private void checkAndAddNewTweet(Tweet newTweet) {
 		tweets.add(0, newTweet);
+		
+		// Add Active Android Put Data
+		// clear ArrayList
+		// Pull Data from Active Android
+		
 		adapterTweets.notifyDataSetChanged();
 		sinceId = newTweet.getUid();
 		
