@@ -31,13 +31,16 @@ public class TimelineActivity extends Activity {
 	private int count;
 	private long maxId;
 	private long sinceId;
-	private Boolean isFirstLoad = true;
 	private final int REQUEST_CODE_COMPOSE = 10;
 	private SwipeRefreshLayout swipeContainer;
+	public enum TweetQueryType {
+		FIRST_LOAD, OLDER_TWEETS, NEWER_TWEETS
+		}
+	public TweetQueryType newTweetType = TweetQueryType.FIRST_LOAD;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);	
 		setContentView(R.layout.activity_timeline);
 		client = TwitterApplication.getRestClient();
 		lvTweets = (ListView) findViewById(R.id.lvTweets);
@@ -51,7 +54,8 @@ public class TimelineActivity extends Activity {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to your AdapterView
         		if(isNetworkAvailable()) {
-        		addOlderTweetstoTimeline(count, maxId, 0);
+        		newTweetType = TweetQueryType.OLDER_TWEETS;
+        		addTweetstoTimeline(count, maxId, 0);
         		} else { networkUnavailableToast(); }
 	    	}
         });
@@ -70,7 +74,7 @@ public class TimelineActivity extends Activity {
        // Pull Tweets from Active Android
         
         if(isNetworkAvailable()) {
-		addOlderTweetstoTimeline(count, maxId, 0);
+		addTweetstoTimeline(count, maxId, 0);
         } else { networkUnavailableToast(); }
 	}
 	
@@ -80,86 +84,68 @@ public class TimelineActivity extends Activity {
         getMenuInflater().inflate(R.menu.timeline, menu);
         return true;
     }
-	
-	public void addOlderTweetstoTimeline(int count, long maxId, long sinceId) {
+
+	public void addTweetstoTimeline(int count, long maxId, long sinceId) {
 		
 		client.getHomeTimeline(count, maxId, sinceId, new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONArray json) {
-				ArrayList<Tweet> newTweets = Tweet.fromJSONArray(json);
-				setmaxId(newTweets);
-				
-				// Add Active Android Put Data
-				// clear ArrayList
-				// Pull Data from Active Android
-				
-				adapterTweets.addAll(newTweets);
-				Boolean firstLoad = checkFirstLoad();
-				if (firstLoad == true) {
-				setsinceId(tweets);
+				ArrayList<Tweet> newTweets = Tweet.fromJSONArray(json);			 
+				if (newTweets.size() > 0) {				
+					// Add Active Android Put Data
+					// clear ArrayList
+					// Pull Data from Active Android										
+					if (newTweetType == TweetQueryType.NEWER_TWEETS) {
+						tweets.addAll(0, newTweets);
+					} else {
+						tweets.addAll(newTweets);
+					}
+					
+					adapterTweets.notifyDataSetChanged();
+					checkTweetTypeAndSetSinceIdAndMaxId();
 				}
-				setFirstLoad(false);
+				stopRefreshing();
 			}
 
 			@Override
 			public void onFailure(Throwable e, String s) {
 				Log.d("Debug", e.toString());
 				Log.d("Debug", s.toString());
+				stopRefreshing();
 			}
 		});
 		
 	}
 	
-	public void addNewerTweetstoTimeline(int count, long maxId, long sinceId) {
-		
-		client.getHomeTimeline(count, 0, sinceId, new JsonHttpResponseHandler() {
-			@Override
-			public void onSuccess(JSONArray json) {
-				ArrayList<Tweet> newTweets = Tweet.fromJSONArray(json);
-				if (newTweets.size() > 0) {
-					setsinceId(newTweets);
-					
-					// Add Active Android Put Data
-					// clear ArrayList
-					// Pull Data from Active Android										
-					
-					tweets.addAll(0, newTweets);
-					adapterTweets.notifyDataSetChanged();
-					swipeContainer.setRefreshing(false);
-				}			
-			}
-			@Override
-			public void onFailure(Throwable e, String s) {
-				Log.d("Debug", e.toString());
-				Log.d("Debug", s.toString());
-				swipeContainer.setRefreshing(false);
-			}
-			
-		});
-		
-	}
-	
-	public void setmaxId(ArrayList<Tweet> newTweets) {
-		Tweet lastTweet = newTweets.get(newTweets.size() - 1);
+	public void setmaxId(ArrayList<Tweet> tweets) {
+		Tweet lastTweet = tweets.get(tweets.size() - 1);
 		maxId = (lastTweet.getUid())-1;
 	}
 	
-	public void setsinceId(ArrayList<Tweet> newTweets) {
-		Tweet firstTweet = newTweets.get(0);
+	public void setsinceId(ArrayList<Tweet> tweets) {
+		Tweet firstTweet = tweets.get(0);
 		sinceId = firstTweet.getUid();
 	}
 	
-	private Boolean checkFirstLoad() {
-		return isFirstLoad;
-	}
-	
-	private void setFirstLoad(boolean b) {
-		isFirstLoad = b;		
+	public void checkTweetTypeAndSetSinceIdAndMaxId() {
+		
+		if(newTweetType == TweetQueryType.NEWER_TWEETS) {
+			setsinceId(tweets);
+		}
+		if(newTweetType == TweetQueryType.OLDER_TWEETS) {
+			setmaxId(tweets);
+		}
+		if(newTweetType == TweetQueryType.FIRST_LOAD) {
+			setsinceId(tweets);
+			setmaxId(tweets);
+		}
+		
 	}
 	
 	public void refreshTimeline() {
 		if(isNetworkAvailable()) {
-			addNewerTweetstoTimeline(count, maxId, sinceId);
+			newTweetType= TweetQueryType.NEWER_TWEETS;
+			addTweetstoTimeline(count, 0, sinceId);
 		} else { networkUnavailableToast(); }
 		
 	}
@@ -202,6 +188,11 @@ public class TimelineActivity extends Activity {
 		
 		adapterTweets.notifyDataSetChanged();
 		sinceId = newTweet.getUid();
+		
+	}
+	
+	private void stopRefreshing() {
+		swipeContainer.setRefreshing(false);
 		
 	}
 	
