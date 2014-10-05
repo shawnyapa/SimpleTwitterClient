@@ -5,20 +5,22 @@ import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Column.ForeignKeyAction;
 import com.activeandroid.annotation.Table;
+import com.activeandroid.query.Select;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
 
 @Table(name = "Tweets")
-public class Tweet implements Serializable{
+public class Tweet extends Model implements Serializable{
 	/**
 	 * 
 	 */
@@ -62,7 +64,14 @@ public class Tweet implements Serializable{
 			tweet.body = jsonObject.getString("text");
 			tweet.uid = jsonObject.getLong("id");
 			tweet.createdAt = setDateFromString(jsonObject.getString("created_at"));		
-			tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
+			List<User> Userlist;
+			Userlist = User.checkforUserbyUid(jsonObject.getJSONObject("user").getLong("id"));
+			if (Userlist.size() > 0) {
+				tweet.user = Userlist.get(0);
+			} else {
+				tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
+			}
+			tweet.save();
 		} catch (JSONException e) {
 			e.printStackTrace();
 			return null;
@@ -89,6 +98,16 @@ public class Tweet implements Serializable{
 		}
 		return tweets;
 	}
+	
+    public static List<Tweet> getAll() {
+        // This is how you execute a query
+        return new Select()
+          .from(Tweet.class)
+          //.where("Category = ?", category.getId())
+          .orderBy("uid DESC")
+          .execute();
+    }
+	
 	public static Date setDateFromString(String date) {
 	    SimpleDateFormat sf = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy", Locale.US);
 	    sf.setLenient(true);

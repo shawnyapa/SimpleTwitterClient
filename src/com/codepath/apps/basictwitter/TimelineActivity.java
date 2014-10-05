@@ -1,6 +1,9 @@
 package com.codepath.apps.basictwitter;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONArray;
 import com.codepath.apps.basictwitter.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -8,6 +11,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -71,14 +75,32 @@ public class TimelineActivity extends Activity {
             } 
         });
         
-       // Pull Tweets from Active Android
-        
         if(isNetworkAvailable()) {
 		addTweetstoTimeline(count, maxId, 0);
-        } else { networkUnavailableToast(); }
+        } else { 
+        	networkUnavailableToast();
+        	// Check if this is the First Ever Application Launch and if the DB Exists
+        	Context context = getApplicationContext();
+        	ContextWrapper contextWrapper = new ContextWrapper(context);
+        	if (doesDatabaseExist(contextWrapper, "RestClient.db")) {
+        		clearAndReloadTweetsfromActiveAndroid();
+        	}
+        }
 	}
 	
-    @Override
+	private static boolean doesDatabaseExist(ContextWrapper context, String dbName) {
+	    File dbFile = context.getDatabasePath(dbName);
+	    return dbFile.exists();
+	}
+	
+    private void clearAndReloadTweetsfromActiveAndroid() {
+		List <Tweet> activeAndroidTweets =  Tweet.getAll();
+		tweets.clear();
+		tweets.addAll(activeAndroidTweets);
+		adapterTweets.notifyDataSetChanged();
+	}
+
+	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.timeline, menu);
@@ -92,16 +114,15 @@ public class TimelineActivity extends Activity {
 			public void onSuccess(JSONArray json) {
 				ArrayList<Tweet> newTweets = Tweet.fromJSONArray(json);			 
 				if (newTweets.size() > 0) {				
-					// Add Active Android Put Data
-					// clear ArrayList
-					// Pull Data from Active Android										
+										
 					if (newTweetType == TweetQueryType.NEWER_TWEETS) {
 						tweets.addAll(0, newTweets);
 					} else {
 						tweets.addAll(newTweets);
 					}
-					
-					adapterTweets.notifyDataSetChanged();
+					// clear ArrayList
+					// Pull Data from Active Android
+					clearAndReloadTweetsfromActiveAndroid();
 					checkTweetTypeAndSetSinceIdAndMaxId();
 				}
 				stopRefreshing();
@@ -181,12 +202,9 @@ public class TimelineActivity extends Activity {
 	
 	private void checkAndAddNewTweet(Tweet newTweet) {
 		tweets.add(0, newTweet);
-		
-		// Add Active Android Put Data
 		// clear ArrayList
 		// Pull Data from Active Android
-		
-		adapterTweets.notifyDataSetChanged();
+		clearAndReloadTweetsfromActiveAndroid();
 		sinceId = newTweet.getUid();
 		
 	}
