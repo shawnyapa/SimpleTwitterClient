@@ -5,10 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
+
+import com.codepath.apps.basictwitter.fragments.HomeTimelineFragment;
+import com.codepath.apps.basictwitter.fragments.MentionsTimelineFragment;
+import com.codepath.apps.basictwitter.fragments.TweetsListFragment;
+import com.codepath.apps.basictwitter.listeners.FragmentTabListener;
 import com.codepath.apps.basictwitter.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -23,81 +29,49 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 
 
-public class TimelineActivity extends Activity {
-	public TwitterClient client;
-	private ArrayList<Tweet> tweets;
-	private ArrayAdapter<Tweet> adapterTweets;
-	private ListView lvTweets;
-	private int count;
-	private long maxId;
-	private long sinceId;
-	private final int REQUEST_CODE_COMPOSE = 10;
-	private SwipeRefreshLayout swipeContainer;
-	public enum TweetQueryType {
-		FIRST_LOAD, OLDER_TWEETS, NEWER_TWEETS
-		}
-	public TweetQueryType newTweetType = TweetQueryType.FIRST_LOAD;
+public class TimelineActivity extends FragmentActivity {
+
+	public final int REQUEST_CODE_COMPOSE = 10;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);	
 		setContentView(R.layout.activity_timeline);
-		client = TwitterApplication.getRestClient();
-		lvTweets = (ListView) findViewById(R.id.lvTweets);
-		tweets = new ArrayList<Tweet>();
-		adapterTweets = new TweetArrayAdapter(this, tweets);
-		count = 20;
-		lvTweets.setAdapter(adapterTweets);
-        lvTweets.setOnScrollListener(new EndlessScrollListener() {
-        	@Override
-	    	public void onLoadMore(int page, int totalItemsCount) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to your AdapterView
-        		if(isNetworkAvailable()) {
-        		newTweetType = TweetQueryType.OLDER_TWEETS;
-        		addTweetstoTimeline(count, maxId, 0);
-        		} else { networkUnavailableToast(); }
-	    	}
-        });
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        // Setup refresh listener which triggers new data loading
-        swipeContainer.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
-            	refreshTimeline();
-            } 
-        });
-        
-        if(isNetworkAvailable()) {
-		addTweetstoTimeline(count, maxId, 0);
-        } else { 
-        	networkUnavailableToast();
-        	// Check if this is the First Ever Application Launch and if the DB Exists
-        	Context context = getApplicationContext();
-        	ContextWrapper contextWrapper = new ContextWrapper(context);
-        	if (doesDatabaseExist(contextWrapper, "RestClient.db")) {
-        		clearAndReloadTweetsfromActiveAndroid();
-        	}
-        }
+		setupTabs();
 	}
 	
-	private static boolean doesDatabaseExist(ContextWrapper context, String dbName) {
-	    File dbFile = context.getDatabasePath(dbName);
-	    return dbFile.exists();
-	}
-	
-    private void clearAndReloadTweetsfromActiveAndroid() {
-		List <Tweet> activeAndroidTweets =  Tweet.getAll();
-		tweets.clear();
-		tweets.addAll(activeAndroidTweets);
-		adapterTweets.notifyDataSetChanged();
+	private void setupTabs() {
+		ActionBar actionBar = getActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		actionBar.setDisplayShowTitleEnabled(true);
+
+		Tab tab1 = actionBar
+			.newTab()
+			.setText("Home")
+			.setIcon(R.drawable.ic_home)
+			.setTag("HomeTimelineFragment")
+			.setTabListener(
+				new FragmentTabListener<HomeTimelineFragment>(R.id.flContainer, this, "first",
+								HomeTimelineFragment.class));
+
+		actionBar.addTab(tab1);
+		actionBar.selectTab(tab1);
+
+		Tab tab2 = actionBar
+			.newTab()
+			.setText("Mentions")
+			.setIcon(R.drawable.ic_mentions)
+			.setTag("MentionsTimelineFragment")
+			.setTabListener(
+			    new FragmentTabListener<MentionsTimelineFragment>(R.id.flContainer, this, "second",
+								MentionsTimelineFragment.class));
+
+		actionBar.addTab(tab2);
 	}
 
 	@Override
@@ -107,79 +81,12 @@ public class TimelineActivity extends Activity {
         return true;
     }
 
-	public void addTweetstoTimeline(int count, long maxId, long sinceId) {
-		
-		client.getHomeTimeline(count, maxId, sinceId, new JsonHttpResponseHandler() {
-			@Override
-			public void onSuccess(JSONArray json) {
-				ArrayList<Tweet> newTweets = Tweet.fromJSONArray(json);			 
-				if (newTweets.size() > 0) {				
-										
-					if (newTweetType == TweetQueryType.NEWER_TWEETS) {
-						tweets.addAll(0, newTweets);
-					} else {
-						tweets.addAll(newTweets);
-					}
-					// clear ArrayList
-					// Pull Data from Active Android
-					clearAndReloadTweetsfromActiveAndroid();
-					checkTweetTypeAndSetSinceIdAndMaxId();
-				}
-				stopRefreshing();
-			}
-
-			@Override
-			public void onFailure(Throwable e, String s) {
-				Log.d("Debug", e.toString());
-				Log.d("Debug", s.toString());
-				stopRefreshing();
-			}
-		});
-		
-	}
-	
-	public void setmaxId(ArrayList<Tweet> tweets) {
-		Tweet lastTweet = tweets.get(tweets.size() - 1);
-		maxId = (lastTweet.getUid())-1;
-	}
-	
-	public void setsinceId(ArrayList<Tweet> tweets) {
-		Tweet firstTweet = tweets.get(0);
-		sinceId = firstTweet.getUid();
-	}
-	
-	public void checkTweetTypeAndSetSinceIdAndMaxId() {
-		
-		if(newTweetType == TweetQueryType.NEWER_TWEETS) {
-			setsinceId(tweets);
-		}
-		if(newTweetType == TweetQueryType.OLDER_TWEETS) {
-			setmaxId(tweets);
-		}
-		if(newTweetType == TweetQueryType.FIRST_LOAD) {
-			setsinceId(tweets);
-			setmaxId(tweets);
-		}
-		
-	}
-	
-	public void refreshTimeline() {
-		if(isNetworkAvailable()) {
-			newTweetType= TweetQueryType.NEWER_TWEETS;
-			addTweetstoTimeline(count, 0, sinceId);
-		} else { networkUnavailableToast(); }
-		
-	}
-	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle presses on the action bar items
 	    switch (item.getItemId()) {
 	        case R.id.postTweet:
 	            onCompose(item);
-	            return true;
-	        case R.id.refreshTimeline:
-	            refreshTimeline();
 	            return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
@@ -196,11 +103,11 @@ public class TimelineActivity extends Activity {
 	  // REQUEST_CODE is defined above
 		if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_COMPOSE) {
 			Tweet newTweet = (Tweet) data.getSerializableExtra("newTweet");
-			checkAndAddNewTweet(newTweet);
+			//checkAndAddNewTweet(newTweet);
 		}
 	}
-	
-	private void checkAndAddNewTweet(Tweet newTweet) {
+	/*
+	public void checkAndAddNewTweet(Tweet newTweet) {
 		tweets.add(0, newTweet);
 		// clear ArrayList
 		// Pull Data from Active Android
@@ -208,20 +115,6 @@ public class TimelineActivity extends Activity {
 		sinceId = newTweet.getUid();
 		
 	}
-	
-	private void stopRefreshing() {
-		swipeContainer.setRefreshing(false);
-		
-	}
-	
-	private Boolean isNetworkAvailable() {
-	    ConnectivityManager connectivityManager 
-	          = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-	    return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
-	}
-	
-	public void networkUnavailableToast() {
-		Toast.makeText(this, "Network is Unavailable", Toast.LENGTH_LONG).show(); 
-	}
+	*/
+
 }

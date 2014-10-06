@@ -99,7 +99,16 @@ public class Tweet extends Model implements Serializable{
 		return tweets;
 	}
 	
-    public static List<Tweet> getAll() {
+    public static List<Tweet> getAllTweets() {
+        // This is how you execute a query
+        return new Select()
+          .from(Tweet.class)
+          //.where("Category = ?", category.getId())
+          .orderBy("uid DESC")
+          .execute();
+    }
+    
+    public static List<Tweet> getAllMentions() {
         // This is how you execute a query
         return new Select()
           .from(Tweet.class)

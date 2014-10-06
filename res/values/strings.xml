@@ -6,7 +6,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_photos">Flickr Photos</string>
     <string name="login_label">Connect to Twitter</string>
-    <string name="title_activity_timeline">TimelineActivity</string>
+    <string name="title_activity_timeline">Twitter</string>
     <string name="tweet_body">This is the tweet body.</string>
     <string name="screen_name">\@user</string>
     <string name="time_delta">Time since Tweet</string>
