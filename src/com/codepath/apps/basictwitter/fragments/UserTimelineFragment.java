@@ -1,21 +1,17 @@
 package com.codepath.apps.basictwitter.fragments;
 
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.annotation.Nullable;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+public class UserTimelineFragment extends TweetsListFragment {
 
-public class HomeTimelineFragment extends TweetsListFragment {
-    
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-    	super.onCreate(savedInstanceState);
-    	setType("home");
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setType("user");
         if(isNetworkAvailable()) {
 		addTweetstoTimeline(count, maxId, 0);
         } else { 
@@ -25,16 +21,12 @@ public class HomeTimelineFragment extends TweetsListFragment {
         		clearAndReloadTweetsfromActiveAndroid();
         	}
         }
-    }
-    
-    @Override
-    public View onCreateView(LayoutInflater inflater,
-    		@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-    	return super.onCreateView(inflater, container, savedInstanceState);
-        
-    }
-
-
+	}
 	
-
+	@Override
+	public View onCreateView(LayoutInflater inflater,
+			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		return super.onCreateView(inflater, container, savedInstanceState);
+	}
+	
 }

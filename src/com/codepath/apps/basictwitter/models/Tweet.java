@@ -128,5 +128,14 @@ public class Tweet extends Model implements Serializable{
 		}
 	    return tweetDate;
 	}
+
+	public static List<Tweet> getAllUserTweets() {
+		
+        return new Select()
+        .from(Tweet.class)
+        //.where("Category = ?", category.getId())
+        .orderBy("uid DESC")
+        .execute();
+	}
 	
 }

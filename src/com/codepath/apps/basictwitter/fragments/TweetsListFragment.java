@@ -45,28 +45,26 @@ public class TweetsListFragment extends Fragment {
 		FIRST_LOAD, OLDER_TWEETS, NEWER_TWEETS
 		}
 	public TweetQueryType newTweetType = TweetQueryType.FIRST_LOAD;
-	public enum TweetOrMention {
-		TWEET, MENTION
-		}
-	public TweetOrMention tweetOrMention;
+	//public enum TweetOrMention {
+	//	TWEET, MENTION, USER
+	//	}
+	//public TweetOrMention tweetOrMention;
+	public String type;
 	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		tweets = new ArrayList<Tweet>();
 		adapterTweets = new TweetArrayAdapter(getActivity(), tweets);
-		client = TwitterApplication.getRestClient();	
-        if(isNetworkAvailable()) {
-		addTweetstoTimeline(count, maxId, 0);
-        } else { 
-        	networkUnavailableToast();
-        	// Check if this is the First Ever Application Launch and if the DB Exists
-        	Context context = getActivity().getApplicationContext();
-        	ContextWrapper contextWrapper = new ContextWrapper(context);
-        	if (doesDatabaseExist(contextWrapper, "RestClient.db")) {
-        		clearAndReloadTweetsfromActiveAndroid();
-        	}
-        }
+		client = TwitterApplication.getRestClient();
 
 	}
 	
@@ -103,15 +101,9 @@ public class TweetsListFragment extends Fragment {
 		return v;
 	}
 	
-	public void addTweetstoTimeline(int count, long maxId, long sinceId) {
-		String type ="";
-		if (tweetOrMention == TweetOrMention.TWEET) {
-			type = "home";
-		}
-		if (tweetOrMention == TweetOrMention.MENTION) {
-			type = "mentions";
-		}
-		type = "mentions";
+	public void addTweetstoTimeline(int count, long maxId, long sinceId) {	
+		Log.d("Debug", "Type: " + type);
+		//type="mentions";
 		client.getTimeline(type, count, maxId, sinceId, new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONArray json) {		
@@ -145,12 +137,15 @@ public class TweetsListFragment extends Fragment {
 	
     public void clearAndReloadTweetsfromActiveAndroid() {
     	ArrayList <Tweet> activeAndroidTweets = new ArrayList<Tweet>();
-    	if (tweetOrMention == TweetOrMention.TWEET) {
+    	if (type.equals("home")) {
     		activeAndroidTweets =  (ArrayList) Tweet.getAllTweets();
     	}
-    	if (tweetOrMention == TweetOrMention.MENTION) {
+    	if (type.equals("mentions")) {
     		activeAndroidTweets =  (ArrayList) Tweet.getAllMentions();
-    	}			
+    	}
+    	if (type.equals("user")) {
+    		activeAndroidTweets =  (ArrayList) Tweet.getAllUserTweets();
+    	}
 		tweets.clear();
 		tweets.addAll(activeAndroidTweets);
 		adapterTweets.notifyDataSetChanged();
@@ -193,7 +188,9 @@ public class TweetsListFragment extends Fragment {
 		swipeContainer.setRefreshing(false);
 		
 	}
-	public static boolean doesDatabaseExist(ContextWrapper context, String dbName) {
+	public boolean doesDatabaseExist() {
+    	Context context = getActivity().getApplicationContext();
+    	String dbName = "RestClient.db";
 	    File dbFile = context.getDatabasePath(dbName);
 	    return dbFile.exists();
 	}

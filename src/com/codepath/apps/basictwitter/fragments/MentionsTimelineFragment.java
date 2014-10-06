@@ -12,7 +12,16 @@ public class MentionsTimelineFragment extends TweetsListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		tweetOrMention = TweetOrMention.MENTION;
+		setType("mentions");
+        if(isNetworkAvailable()) {
+		addTweetstoTimeline(count, maxId, 0);
+        } else { 
+        	networkUnavailableToast();
+        	// Check if this is the First Ever Application Launch and if the DB Exists
+        	if (doesDatabaseExist()) {
+        		clearAndReloadTweetsfromActiveAndroid();
+        	}
+        }
 	}
 	
 	@Override

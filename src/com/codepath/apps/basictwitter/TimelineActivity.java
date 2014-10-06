@@ -80,6 +80,11 @@ public class TimelineActivity extends FragmentActivity {
         getMenuInflater().inflate(R.menu.timeline, menu);
         return true;
     }
+	
+	public void onProfileView(MenuItem mi) {
+		Intent i = new Intent(this, ProfileActivity.class);
+		startActivity(i);
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
