@@ -8,13 +8,73 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.codepath.apps.basictwitter.ProfileActivity" >
 
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true" >
+        
+        <ImageView
+        android:id="@+id/ivProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:contentDescription="@string/profile"
+        android:src="@drawable/ic_profile" />
+        
+        <TextView
+        android:id="@+id/tvTagline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/ivProfile"
+        android:layout_alignParentTop="true"
+        android:padding="10dp"
+        android:text="@string/tagline" />
+        
+        
+        <RelativeLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/ivProfile"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tvTagline" > 
+ 
+        <TextView
+        android:id="@+id/tvFollowing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:padding="10dp"
+        android:text="@string/following" />
+ 
+        <TextView
+        android:id="@+id/tvFollowers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/tvFollowing"
+        android:layout_alignParentTop="true"
+        android:padding="10dp"
+        android:text="@string/followers" />
+            
+        </RelativeLayout>
+        
+    </RelativeLayout>
+
     <fragment
         android:id="@+id/fragment1"
         android:name="com.codepath.apps.basictwitter.fragments.UserTimelineFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/relativeLayout1"
         tools:layout="@layout/fragment_tweets_list" />
+
+ 
 
 </RelativeLayout>

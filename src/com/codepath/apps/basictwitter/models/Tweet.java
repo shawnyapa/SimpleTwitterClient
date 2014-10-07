@@ -63,7 +63,8 @@ public class Tweet extends Model implements Serializable{
 		try {
 			tweet.body = jsonObject.getString("text");
 			tweet.uid = jsonObject.getLong("id");
-			tweet.createdAt = setDateFromString(jsonObject.getString("created_at"));		
+			tweet.createdAt = setDateFromString(jsonObject.getString("created_at"));
+			/*
 			List<User> Userlist;
 			Userlist = User.checkforUserbyUid(jsonObject.getJSONObject("user").getLong("id"));
 			if (Userlist.size() > 0) {
@@ -72,10 +73,14 @@ public class Tweet extends Model implements Serializable{
 				tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
 			}
 			tweet.save();
+			*/
+			tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
+			
 		} catch (JSONException e) {
 			e.printStackTrace();
 			return null;
 		}
+		
 		
 		return tweet;
 	}

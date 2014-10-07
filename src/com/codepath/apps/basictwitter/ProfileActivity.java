@@ -5,20 +5,38 @@ import org.json.JSONObject;
 
 import com.codepath.apps.basictwitter.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class ProfileActivity extends FragmentActivity {
+	
+	ImageView ivProfile;
+	TextView tvTagline;
+	TextView tvFollowing;
+	TextView tvFollowers;
+	User user;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profile);
-		loadProfileInfo();
+		ivProfile = (ImageView) findViewById(R.id.ivProfile);
+		tvTagline = (TextView) findViewById(R.id.tvTagline);
+		tvFollowing = (TextView) findViewById(R.id.tvFollowing);
+		tvFollowers = (TextView) findViewById(R.id.tvFollowers);
+		user = (User) getIntent().getSerializableExtra("user");
+		if (user == null) {
+			loadProfileInfo(); 
+		} else {		
+			loadProfileInfoforOtherUsers(user);
+		}
 	}
 	
 	public void loadProfileInfo() {
@@ -27,10 +45,26 @@ public class ProfileActivity extends FragmentActivity {
 			public void onSuccess(JSONObject json) {
 				User u = User.fromJSON(json);
 				getActionBar().setTitle("@" + u.getScreenName());
+				ImageLoader imageLoader = ImageLoader.getInstance();
+				imageLoader.displayImage(u.getProfileImageUrl(), ivProfile);
+				tvTagline.setText(u.getTagline());
+				tvFollowing.setText("Following: " + u.getFollowing());
+				tvFollowers.setText("Followers: " + u.getFollowers());
 				
 			}
 		});
 	}
+	
+	public void loadProfileInfoforOtherUsers(User u) {	
+			getActionBar().setTitle("@" + u.getScreenName());
+			ImageLoader imageLoader = ImageLoader.getInstance();
+			imageLoader.displayImage(u.getProfileImageUrl(), ivProfile);
+			tvTagline.setText(u.getTagline());
+			tvFollowing.setText("Following: " + u.getFollowing());
+			tvFollowers.setText("Followers: " + u.getFollowers());	
+	}
+	
+	// Get Intent
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

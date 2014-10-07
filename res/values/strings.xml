@@ -15,5 +15,9 @@
     <string name="refresh">Refresh</string>
     <string name="char_count">"Character Count: "</string>
     <string name="title_activity_profile">ProfileActivity</string>
+    <string name="profile">Profile</string>
+    <string name="tagline">This is the tagline!</string>
+    <string name="following">Following:</string>
+    <string name="followers">Followers:</string>
 
 </resources>

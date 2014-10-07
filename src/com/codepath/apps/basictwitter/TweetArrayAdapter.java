@@ -9,6 +9,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.LayoutInflater;
@@ -42,6 +43,8 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
 		ivProfileImage.setImageResource(android.R.color.transparent);
 		ImageLoader imageLoader = ImageLoader.getInstance();
 		imageLoader.displayImage(tweet.getUser().getProfileImageUrl(), ivProfileImage);
+
+		
 		tvScreenName.setText(tweet.getUser().getScreenName());
 		tvBody.setText(tweet.getBody());
 		tvTimeDelta.setText(tweetTimeDelta(tweet.getCreatedAt()));

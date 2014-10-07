@@ -118,7 +118,8 @@ public class TweetsListFragment extends Fragment {
 					
 					// clear ArrayList
 					// Pull Data from Active Android
-					clearAndReloadTweetsfromActiveAndroid();
+					//clearAndReloadTweetsfromActiveAndroid();
+					adapterTweets.notifyDataSetChanged();
 					checkTweetTypeAndSetSinceIdAndMaxId();
 				}
 				stopRefreshing();

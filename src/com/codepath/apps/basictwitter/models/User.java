@@ -27,7 +27,15 @@ public class User extends Model implements Serializable {
 	public String screenName;
 	@Column (name="profileImageUrl")
 	public String profileImageUrl;
-
+	@Column (name="tagline")
+	public String tagline;
+	@Column (name="following")
+	public String following;
+	@Column (name="followers")
+	public String followers;
+	
+	
+	
 	public User() {
 		super();
 	}
@@ -39,7 +47,10 @@ public class User extends Model implements Serializable {
 			user.uid = jsonObject.getLong("id");
 			user.screenName = jsonObject.getString("screen_name");
 			user.profileImageUrl = jsonObject.getString("profile_image_url");
-			user.save();	
+			user.tagline = jsonObject.getString("description");
+			user.followers = jsonObject.getString("followers_count");
+			user.following = jsonObject.getString("favourites_count");
+			//user.save();	
 		} catch (JSONException e) {
 			e.printStackTrace();
 			return null;
@@ -64,7 +75,19 @@ public class User extends Model implements Serializable {
 		return profileImageUrl;
 	}
 	
-    public static List<User> checkforUserbyUid (long uid) {
+    public String getTagline() {
+		return tagline;
+	}
+
+	public String getFollowing() {
+		return following;
+	}
+
+	public String getFollowers() {
+		return followers;
+	}
+
+	public static List<User> checkforUserbyUid (long uid) {
     	return new Select()
         .from(User.class)
         .where("uid = ?", uid)
