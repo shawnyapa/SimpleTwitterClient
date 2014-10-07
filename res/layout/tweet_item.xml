@@ -10,6 +10,18 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:src="@drawable/ic_launcher" />
+    
+    <Button
+        android:id="@+id/btUser"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:onClick="onUserProfile"
+        android:background="@android:color/transparent"
+        android:text="" />
+    
 
     <TextView
         android:id="@+id/tvScreenName"
@@ -34,5 +46,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:text="@string/time_delta" />
+
+
 
 </RelativeLayout>

@@ -12,8 +12,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ProfileActivity extends FragmentActivity {
 	
@@ -31,7 +33,7 @@ public class ProfileActivity extends FragmentActivity {
 		tvTagline = (TextView) findViewById(R.id.tvTagline);
 		tvFollowing = (TextView) findViewById(R.id.tvFollowing);
 		tvFollowers = (TextView) findViewById(R.id.tvFollowers);
-		user = (User) getIntent().getSerializableExtra("user");
+		user = (User) getIntent().getSerializableExtra("User");
 		if (user == null) {
 			loadProfileInfo(); 
 		} else {		
@@ -83,5 +85,9 @@ public class ProfileActivity extends FragmentActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	public void onUserProfile(View v) {
+		Toast.makeText(this, "Button Pressed", Toast.LENGTH_SHORT).show();
 	}
 }

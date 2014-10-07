@@ -136,6 +136,7 @@ public class TweetsListFragment extends Fragment {
 		
 	}
 	
+		
     public void clearAndReloadTweetsfromActiveAndroid() {
     	ArrayList <Tweet> activeAndroidTweets = new ArrayList<Tweet>();
     	if (type.equals("home")) {

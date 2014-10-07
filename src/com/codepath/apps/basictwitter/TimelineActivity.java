@@ -11,6 +11,7 @@ import com.codepath.apps.basictwitter.fragments.MentionsTimelineFragment;
 import com.codepath.apps.basictwitter.fragments.TweetsListFragment;
 import com.codepath.apps.basictwitter.listeners.FragmentTabListener;
 import com.codepath.apps.basictwitter.models.Tweet;
+import com.codepath.apps.basictwitter.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.ActionBar;
@@ -101,6 +102,13 @@ public class TimelineActivity extends FragmentActivity {
 	public void onCompose(MenuItem mi) {
 		Intent i = new Intent(this, CreateTweetActivity.class);
 		startActivityForResult(i, REQUEST_CODE_COMPOSE);
+	}
+	
+	public void onUserProfile(View v) {
+		User user = (User) v.getTag();
+		Intent i = new Intent(this, ProfileActivity.class);
+		i.putExtra("User", user);
+		startActivity(i);	
 	}
 	
 	@Override

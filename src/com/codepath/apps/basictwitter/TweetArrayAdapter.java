@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.codepath.apps.basictwitter.models.Tweet;
+import com.codepath.apps.basictwitter.models.User;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -43,8 +44,9 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
 		ivProfileImage.setImageResource(android.R.color.transparent);
 		ImageLoader imageLoader = ImageLoader.getInstance();
 		imageLoader.displayImage(tweet.getUser().getProfileImageUrl(), ivProfileImage);
-
-		
+		Button btUser = (Button) v.findViewById(R.id.btUser);
+		User user = tweet.getUser();
+		btUser.setTag(user);
 		tvScreenName.setText(tweet.getUser().getScreenName());
 		tvBody.setText(tweet.getBody());
 		tvTimeDelta.setText(tweetTimeDelta(tweet.getCreatedAt()));
