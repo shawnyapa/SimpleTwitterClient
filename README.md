@@ -5,6 +5,7 @@ Project Completed
 Hours Spent: 20hrs this week
 
 UI Looks a little better this week.
+
 ***Active Android Integrated with Many Tweet-> One User - Disabled to show all Timelines unmerged ***
 
 Week 4 Required Stories: Completed
