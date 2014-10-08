@@ -55,7 +55,8 @@
         </activity>
         <activity
             android:name=".ProfileActivity"
-            android:label="@string/title_activity_profile" >
+            android:label="@string/title_activity_profile" 
+            android:parentActivityName=".TimelineActivity" >
         </activity>
     </application>
 

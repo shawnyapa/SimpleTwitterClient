@@ -29,6 +29,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/ivProfileImage"
+        android:padding="5dp"
+        android:paddingBottom="1dp"
         android:text="@string/screen_name" />
 
     <TextView
@@ -37,6 +39,8 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/tvScreenName"
         android:layout_below="@+id/tvScreenName"
+        android:padding="5dp"
+        android:paddingBottom="1dp"
         android:text="@string/tweet_body" />
 
     <TextView
