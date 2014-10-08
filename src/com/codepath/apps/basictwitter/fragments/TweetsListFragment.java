@@ -2,12 +2,8 @@ package com.codepath.apps.basictwitter.fragments;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
-
 import org.json.JSONArray;
-
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -45,12 +41,18 @@ public class TweetsListFragment extends Fragment {
 		FIRST_LOAD, OLDER_TWEETS, NEWER_TWEETS
 		}
 	public TweetQueryType newTweetType = TweetQueryType.FIRST_LOAD;
-	//public enum TweetOrMention {
-	//	TWEET, MENTION, USER
-	//	}
-	//public TweetOrMention tweetOrMention;
+
 	public String type;
+	public String user;
 	
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
 	public String getType() {
 		return type;
 	}
@@ -102,9 +104,8 @@ public class TweetsListFragment extends Fragment {
 	}
 	
 	public void addTweetstoTimeline(int count, long maxId, long sinceId) {	
-		Log.d("Debug", "Type: " + type);
-		//type="mentions";
-		client.getTimeline(type, count, maxId, sinceId, new JsonHttpResponseHandler() {
+		
+		client.getTimeline(user, type, count, maxId, sinceId, new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONArray json) {		
 				ArrayList<Tweet> newTweets = Tweet.fromJSONArray(json);

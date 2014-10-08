@@ -1,15 +1,14 @@
 package com.codepath.apps.basictwitter;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.codepath.apps.basictwitter.fragments.UserTimelineFragment;
 import com.codepath.apps.basictwitter.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.nostra13.universalimageloader.core.ImageLoader;
-
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,7 +37,19 @@ public class ProfileActivity extends FragmentActivity {
 			loadProfileInfo(); 
 		} else {		
 			loadProfileInfoforOtherUsers(user);
-		}
+			createUserTimelineFragment(user);
+		}	
+	}
+	
+	public void createUserTimelineFragment(User user) {
+		String userId = String.valueOf(user.getUid());
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		// Replace the container with the new fragment
+		UserTimelineFragment userTimelineFragment = new UserTimelineFragment();
+		userTimelineFragment.setUser(userId);
+		ft.replace(R.id.ctUserTimelineFragment, userTimelineFragment);
+		// Execute the changes specified
+		ft.commit();
 	}
 	
 	public void loadProfileInfo() {
@@ -52,7 +63,7 @@ public class ProfileActivity extends FragmentActivity {
 				tvTagline.setText(u.getTagline());
 				tvFollowing.setText("Following: " + u.getFollowing());
 				tvFollowers.setText("Followers: " + u.getFollowers());
-				
+				createUserTimelineFragment(u);
 			}
 		});
 	}
@@ -65,8 +76,6 @@ public class ProfileActivity extends FragmentActivity {
 			tvFollowing.setText("Following: " + u.getFollowing());
 			tvFollowers.setText("Followers: " + u.getFollowers());	
 	}
-	
-	// Get Intent
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -88,6 +97,6 @@ public class ProfileActivity extends FragmentActivity {
 	}
 	
 	public void onUserProfile(View v) {
-		Toast.makeText(this, "Button Pressed", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "Button Pressed", Toast.LENGTH_SHORT).show();
 	}
 }

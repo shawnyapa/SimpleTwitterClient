@@ -65,16 +65,14 @@
         </RelativeLayout>
         
     </RelativeLayout>
-
-    <fragment
-        android:id="@+id/fragment1"
-        android:name="com.codepath.apps.basictwitter.fragments.UserTimelineFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/relativeLayout1"
-        tools:layout="@layout/fragment_tweets_list" />
-
- 
+  
+     <FrameLayout
+       android:id="@+id/ctUserTimelineFragment"
+       android:layout_below="@+id/relativeLayout1"
+       android:layout_alignParentLeft="true"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       tools:layout="@layout/fragment_tweets_list">
+  	</FrameLayout>
 
 </RelativeLayout>

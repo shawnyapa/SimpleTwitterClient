@@ -32,7 +32,7 @@ public class TwitterClient extends OAuthBaseClient {
 		super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, REST_CALLBACK_URL);
 	}
 
-	public void getTimeline(String type, int count, long maxId, long sinceId, AsyncHttpResponseHandler handler) {
+	public void getTimeline(String user, String type, int count, long maxId, long sinceId, AsyncHttpResponseHandler handler) {
 		String countString = Integer.toString(count);
 		String max_id = Long.toString(maxId);
 		String since_id = Long.toString(sinceId);
@@ -42,6 +42,7 @@ public class TwitterClient extends OAuthBaseClient {
 		if (sinceId != 0) {params.put("since_id", since_id); hasParam = true; }
 		if (count != 0) {params.put("count", countString); hasParam = true; }
 		if (maxId != 0) {params.put("max_id", max_id); hasParam = true; }
+		if (type.equals("user")) {params.put("user_id", user); hasParam = true;}
 		if (hasParam) {
 		client.get(apiUrl, params, handler); 
 		} else {
