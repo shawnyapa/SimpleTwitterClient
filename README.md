@@ -35,7 +35,8 @@ Required Stories Completed:
  - Optional: User can see a counter with total number of characters left for tweet
  - Optional: Pull to Refresh
 
+Week 4 Screen Recoring Here:
+<img src="http://i.imgur.com/OWGKWYZ.gif" title="Hosted by imgur.com" />
 
-
-Screen Recoring Here:
+Week 3 Screen Recoring Here:
 <img src="http://i.imgur.com/JIvqJyy.gif" title="Hosted by imgur.com" />
