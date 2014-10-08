@@ -5,7 +5,6 @@ import org.json.JSONArray;
 
 import com.codepath.apps.basictwitter.fragments.HomeTimelineFragment;
 import com.codepath.apps.basictwitter.fragments.MentionsTimelineFragment;
-import com.codepath.apps.basictwitter.fragments.TweetsListFragment;
 import com.codepath.apps.basictwitter.listeners.FragmentTabListener;
 import com.codepath.apps.basictwitter.models.Tweet;
 import com.codepath.apps.basictwitter.models.User;
@@ -47,7 +46,7 @@ public class TimelineActivity extends FragmentActivity {
 		ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayShowTitleEnabled(true);
-
+		
 		Tab tab1 = actionBar
 			.newTab()
 			.setText("Home")
@@ -55,7 +54,7 @@ public class TimelineActivity extends FragmentActivity {
 			.setTag("HomeTimelineFragment")
 			.setTabListener(
 				new FragmentTabListener<HomeTimelineFragment>(R.id.flContainer, this, "first",
-								HomeTimelineFragment.class));
+						HomeTimelineFragment.class));
 
 		actionBar.addTab(tab1);
 		actionBar.selectTab(tab1);
@@ -116,15 +115,16 @@ public class TimelineActivity extends FragmentActivity {
 			//checkAndAddNewTweet(newTweet);
 		}
 	}
-	/*
+	
 	public void checkAndAddNewTweet(Tweet newTweet) {
-		tweets.add(0, newTweet);
+		HomeTimelineFragment homeTimelineFragment = new HomeTimelineFragment();	
+		homeTimelineFragment.tweets.add(0, newTweet);
 		// clear ArrayList
 		// Pull Data from Active Android
-		clearAndReloadTweetsfromActiveAndroid();
-		sinceId = newTweet.getUid();
+		//clearAndReloadTweetsfromActiveAndroid();
+		homeTimelineFragment.sinceId = newTweet.getUid();
 		
 	}
-	*/
+	
 
 }
